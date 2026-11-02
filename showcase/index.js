@@ -1,8 +1,12 @@
+import { Platform } from 'react-native';
 import { registerRootComponent } from 'expo';
 
-import App from './App';
-
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+// Di web, Skia butuh CanvasKit (WebAssembly) dimuat dulu sebelum App dirender.
+if (Platform.OS === 'web') {
+  const { LoadSkiaWeb } = require('@shopify/react-native-skia/lib/module/web');
+  LoadSkiaWeb({ locateFile: (file) => `/${file}` }).then(() => {
+    registerRootComponent(require('./App').default);
+  });
+} else {
+  registerRootComponent(require('./App').default);
+}

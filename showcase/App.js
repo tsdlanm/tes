@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Animated, ScrollView, Switch, SafeAreaView, Easing } from 'react-native';
+import { View, Text, Pressable, Animated, Switch, SafeAreaView, Easing } from 'react-native';
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { THEMES, ThemeCtx, ND } from './src/ui';
@@ -8,6 +9,8 @@ import GestureTab from './src/GestureTab';
 import ComponentsTab from './src/ComponentsTab';
 import LayoutTab from './src/LayoutTab';
 import ChartTab from './src/ChartTab';
+import ProTab from './src/ProTab';
+import StressTab from './src/StressTab';
 
 const TABS = [
   { key: 'anim', label: 'Animasi', icon: '✨', C: AnimTab },
@@ -15,6 +18,8 @@ const TABS = [
   { key: 'comp', label: 'Komponen', icon: '🧩', C: ComponentsTab },
   { key: 'layout', label: 'Layout', icon: '📐', C: LayoutTab },
   { key: 'chart', label: 'Grafik', icon: '📈', C: ChartTab },
+  { key: 'pro', label: 'Pro', icon: '⚡', C: ProTab },
+  { key: 'stress', label: 'Beban', icon: '🔥', C: StressTab },
 ];
 
 function TabBar({ index, onChange, t }) {
@@ -38,8 +43,8 @@ function TabBar({ index, onChange, t }) {
       )}
       {TABS.map((tab, i) => (
         <Pressable key={tab.key} onPress={() => onChange(i)} style={{ flex: 1, alignItems: 'center', paddingVertical: 10 }}>
-          <Text style={{ fontSize: 19 }}>{tab.icon}</Text>
-          <Text style={{ fontSize: 10.5, fontWeight: '800', marginTop: 2, color: i === index ? '#fff' : t.sub }}>{tab.label}</Text>
+          <Text style={{ fontSize: 17 }}>{tab.icon}</Text>
+          <Text style={{ fontSize: 9.5, fontWeight: '800', marginTop: 2, color: i === index ? '#fff' : t.sub }}>{tab.label}</Text>
         </Pressable>
       ))}
     </View>
@@ -66,6 +71,7 @@ export default function App() {
   const Tab = TABS[index];
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <ThemeCtx.Provider value={t}>
       <View style={{ flex: 1, backgroundColor: t.bg, alignItems: 'center' }}>
         <SafeAreaView style={{ flex: 1, width: '100%', maxWidth: 480 }}>
@@ -89,5 +95,6 @@ export default function App() {
         </SafeAreaView>
       </View>
     </ThemeCtx.Provider>
+    </GestureHandlerRootView>
   );
 }
