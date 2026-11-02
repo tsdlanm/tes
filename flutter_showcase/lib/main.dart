@@ -4,6 +4,8 @@ import 'chart_tab.dart';
 import 'components_tab.dart';
 import 'gesture_tab.dart';
 import 'layout_tab.dart';
+import 'pro_tab.dart';
+import 'stress_tab.dart';
 import 'ui.dart';
 
 void main() => runApp(const ShowcaseApp());
@@ -55,8 +57,10 @@ class _HomeState extends State<Home> {
     ('🧩', 'Komponen'),
     ('📐', 'Layout'),
     ('📈', 'Grafik'),
+    ('⚡', 'Pro'),
+    ('🔥', 'Beban'),
   ];
-  static const pages = [AnimTab(), GestureTab(), ComponentsTab(), LayoutTab(), ChartTab()];
+  static const pages = [AnimTab(), GestureTab(), ComponentsTab(), LayoutTab(), ChartTab(), ProTab(), StressTab()];
 
   @override
   Widget build(BuildContext context) {
@@ -143,9 +147,9 @@ class _NavBar extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 onTap: () => onTap(i),
                 child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(tabs[i].$1, style: const TextStyle(fontSize: 19)),
+                  Text(tabs[i].$1, style: const TextStyle(fontSize: 17)),
                   const SizedBox(height: 2),
-                  Text(tabs[i].$2, style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: i == index ? Colors.white : p.sub)),
+                  Text(tabs[i].$2, style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: i == index ? Colors.white : p.sub)),
                 ]),
               ),
             ),
