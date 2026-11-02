@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'anim_tab.dart';
 import 'chart_tab.dart';
+import 'form_tab.dart';
+import 'nav_tab.dart';
 import 'components_tab.dart';
 import 'gesture_tab.dart';
 import 'layout_tab.dart';
@@ -58,9 +60,11 @@ class _HomeState extends State<Home> {
     ('📐', 'Layout'),
     ('📈', 'Grafik'),
     ('⚡', 'Pro'),
+    ('📝', 'Form'),
+    ('🧭', 'Navigasi'),
     ('🔥', 'Beban'),
   ];
-  static const pages = [AnimTab(), GestureTab(), ComponentsTab(), LayoutTab(), ChartTab(), ProTab(), StressTab()];
+  static const pages = [AnimTab(), GestureTab(), ComponentsTab(), LayoutTab(), ChartTab(), ProTab(), FormTab(), NavTab(), StressTab()];
 
   @override
   Widget build(BuildContext context) {
@@ -109,52 +113,84 @@ class _HomeState extends State<Home> {
   }
 }
 
-class _NavBar extends StatelessWidget {
+class _NavBar extends StatefulWidget {
   final int index;
   final ValueChanged<int> onTap;
   final List<(String, String)> tabs;
   const _NavBar({required this.index, required this.onTap, required this.tabs});
   @override
+  State<_NavBar> createState() => _NavBarState();
+}
+
+class _NavBarState extends State<_NavBar> {
+  static const itemW = 76.0;
+  final sc = ScrollController();
+
+  @override
+  void didUpdateWidget(_NavBar o) {
+    super.didUpdateWidget(o);
+    if (o.index != widget.index && sc.hasClients) {
+      sc.animateTo((widget.index * itemW - 120).clamp(0.0, sc.position.maxScrollExtent),
+          duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic);
+    }
+  }
+
+  @override
+  void dispose() {
+    sc.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final p = Pal.of(context);
+    final tabs = widget.tabs;
     return Container(
       height: 64,
       margin: const EdgeInsets.fromLTRB(14, 0, 14, 12),
       decoration: BoxDecoration(color: p.card, borderRadius: BorderRadius.circular(26), border: Border.all(color: p.line)),
-      child: Stack(children: [
-        AnimatedAlign(
-          duration: const Duration(milliseconds: 450),
-          curve: Curves.easeOutBack,
-          alignment: Alignment(-1 + 2 * index / (tabs.length - 1), 0),
-          child: FractionallySizedBox(
-            widthFactor: 1 / tabs.length,
-            heightFactor: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(5),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(21),
-                  gradient: const LinearGradient(colors: [kA, kC], begin: Alignment.topLeft, end: Alignment.bottomRight),
+      clipBehavior: Clip.antiAlias,
+      child: SingleChildScrollView(
+        controller: sc,
+        scrollDirection: Axis.horizontal,
+        child: SizedBox(
+          width: itemW * tabs.length,
+          child: Stack(children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 450),
+              curve: Curves.easeOutBack,
+              left: widget.index * itemW,
+              top: 0,
+              bottom: 0,
+              width: itemW,
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(21),
+                    gradient: const LinearGradient(colors: [kA, kC], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                  ),
                 ),
               ),
             ),
-          ),
+            Row(children: [
+              for (var i = 0; i < tabs.length; i++)
+                SizedBox(
+                  width: itemW,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => widget.onTap(i),
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text(tabs[i].$1, style: const TextStyle(fontSize: 17)),
+                      const SizedBox(height: 2),
+                      Text(tabs[i].$2, style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: i == widget.index ? Colors.white : p.sub)),
+                    ]),
+                  ),
+                ),
+            ]),
+          ]),
         ),
-        Row(children: [
-          for (var i = 0; i < tabs.length; i++)
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => onTap(i),
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(tabs[i].$1, style: const TextStyle(fontSize: 17)),
-                  const SizedBox(height: 2),
-                  Text(tabs[i].$2, style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: i == index ? Colors.white : p.sub)),
-                ]),
-              ),
-            ),
-        ]),
-      ]),
+      ),
     );
   }
 }
